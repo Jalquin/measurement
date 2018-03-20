@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upravit přístroj {{ Pristroj.Nazev }}{% endblock %}
+
+{% block body %}
+    <h2 class="page-header">Upravit přístroj {{ Pristroj.Nazev }}</h2>
+    <br>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}

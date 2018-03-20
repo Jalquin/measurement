@@ -1,0 +1,53 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Seznam přístrojů{% endblock %}
+
+{% block body %}
+    <h2 class="page-header">Seznam Přístrojů</h2>
+    <table id="table" class="table table-striped">
+        <thead>
+        <tr>
+            <th>#</th>
+            <th>Název</th>
+            <th>Kategorie</th>
+            <th>Akce</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for pristroj in pristroje %}
+            <tr>
+                <th scope="row">{{ pristroj.id }}</th>
+                <td>{{ pristroj.nazev }}</td>
+                <td>{{ pristroj.kategorie }}</td>
+                <td>
+                    <a href="/pristroje/detaily/{{ pristroj.id }}" class="btn btn-success">Zobrazit</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                    <a href="/pristroje/upravit/{{ pristroj.id }}" class="btn btn-primary">Upravit</a>
+                    <a href="/pristroje/odstranit/{{ pristroj.id }}" class="btn btn-danger">Odstranit</a>
+                    {% endif %}
+
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>#</th>
+            <th>Název</th>
+            <th>Kategorie</th>
+            <th></th>
+        </tr>
+        </tfoot>
+    </table>
+
+    <script>
+        $(document).ready(function() {
+            $('#table').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.10.16/i18n/Czech.json"
+                }
+            });
+        } );
+    </script>
+
+{% endblock %}

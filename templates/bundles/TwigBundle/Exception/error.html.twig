@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chyba{% endblock %}
+
+{% block body %}
+    <h1>Error</h1>
+    <br>
+    <h2>Neznámá chyba</h2>
+    <p>
+        <a class="btn btn-secondary" href="{{ path('device_list') }}">Zpět</a>
+    </p>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Přidat nový přístroj{% endblock %}
+
+{% block body %}
+    <h2 class="page-header">Přidat přístroj</h2>
+    <br>
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Chyba 404{% endblock %}
+
+{% block body %}
+    <h1>Error 404</h1>
+    <br>
+    <h2>Stránka nenalezena</h2>
+
+    <p>
+        Požadovaná stránka nebyla nalezena. Zkontrolujte URL adresu.
+    </p>
+    <a class="btn btn-secondary" href="{{ path('device_list') }}">Zpět</a>
+{% endblock %}
