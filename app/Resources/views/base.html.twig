@@ -6,7 +6,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="{{ asset('favicon.ico') }}">
-    <title>{% block title %}Example{% endblock %}</title>
+    <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
     <link href="{{ asset('/css/style.css') }}" type="text/css" rel="stylesheet">
@@ -55,7 +55,7 @@
             {% else %}
                 <ul class="nav navbar-nav ml-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ path('registration') }}">
+                        <a class="nav-link" href="{{ path('user_registration') }}">
                             <button type="button" class="btn">Registrovat</button>
                         </a>
                     </li>

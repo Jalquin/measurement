@@ -50,7 +50,5 @@ security:
             access_denied_handler: access_denied_handler
 
     access_control:
-            - { path: ^/registration-form-submission$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/(login|register)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/, roles: ROLE_USER }
-            - { path: ^/pristroje/pridat, roles: ROLE_ADMIN }

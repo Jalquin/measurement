@@ -24,10 +24,15 @@ class MeasurementController extends Controller
             'pristroje' => $pristroje
         ]);
     }
+
     /**
      * @Route("/pristroje/pridat", name="device_add")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function createAction(Request $request){
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
 
         $Pristroj = new Pristroj;
 
@@ -61,10 +66,7 @@ class MeasurementController extends Controller
             $em->persist($Pristroj);
             $em->flush();
 
-            $this->addFlash(
-                'success',
-                'Přístroj přidán'
-            );
+            $this->addFlash('success','Přístroj přidán');
 
             return $this->redirectToRoute('device_list');
         }
@@ -73,8 +75,12 @@ class MeasurementController extends Controller
             'form' => $form->createView()
         ]);
     }
+
     /**
      * @Route("/pristroje/upravit/{id}", name="device_edit")
+     * @param $id
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function editAction($id, Request $request){
 
@@ -133,8 +139,11 @@ class MeasurementController extends Controller
             'form' => $form->createView()
         ]);
     }
+
     /**
      * @Route("/pristroje/detaily/{id}", name="device_details")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function detailsAction($id){
         $Pristroj = $this->getDoctrine()
@@ -145,8 +154,11 @@ class MeasurementController extends Controller
             'Pristroj' => $Pristroj
         ]);
     }
+
     /**
      * @Route("/pristroje/odstranit/{id}", name="device_delete")
+     * @param $id
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse
      */
     public function deleteAction($id){
 
