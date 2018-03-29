@@ -12,6 +12,9 @@ class RegistrationController extends Controller
 {
     /**
      * @Route("/register", name="user_registration")
+     * @param Request $request
+     * @param UserPasswordEncoderInterface $passwordEncoder
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
     public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
@@ -21,6 +24,7 @@ class RegistrationController extends Controller
 
         // 2) handle the submit (will only happen on POST)
         $form->handleRequest($request);
+
         if ($form->isSubmitted() && $form->isValid()) {
 
             // 3) Encode the password (you could also do this via Doctrine listener)
@@ -41,7 +45,7 @@ class RegistrationController extends Controller
 
         return $this->render(
             'registration/register.html.twig',
-            array('form' => $form->createView())
+            ['form' => $form->createView()]
         );
     }
 }

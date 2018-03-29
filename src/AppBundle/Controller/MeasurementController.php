@@ -84,7 +84,7 @@ class MeasurementController extends Controller
      */
     public function editAction($id, Request $request){
 
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
 
         $Pristroj = $this->getDoctrine()
             ->getRepository('AppBundle:Pristroj')
@@ -162,7 +162,7 @@ class MeasurementController extends Controller
      */
     public function deleteAction($id){
 
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
 
         $em = $this->getDoctrine()->getManager();
         $Pristroj = $em->getRepository('AppBundle:Pristroj')->find($id);

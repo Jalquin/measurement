@@ -47,6 +47,7 @@ security:
             # https://symfony.com/doc/current/security/form_login_setup.html
             #form_login: ~
             logout_on_user_change: true
+
             access_denied_handler: access_denied_handler
 
     access_control:
