@@ -4,5 +4,12 @@
 
 {% block body %}
     <h2 class="page-header">Registrace</h2>
-    {{ form(registration_form) }}
+    <hr>
+    {{ form_start(form) }}
+    {{ form_row(form.username) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.plainPassword.first) }}
+    {{ form_row(form.plainPassword.second) }}
+    <button class="btn btn-primary" type="submit">Registrovat</button>
+    {{ form_end(form) }}
 {% endblock %}

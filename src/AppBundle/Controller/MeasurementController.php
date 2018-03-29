@@ -29,8 +29,6 @@ class MeasurementController extends Controller
      */
     public function createAction(Request $request){
 
-        $this->denyAccessUnlessGranted('ROLE_ADMIN', null, 'Unable to access this page!');
-
         $Pristroj = new Pristroj;
 
         $form = $this->createFormBuilder($Pristroj)

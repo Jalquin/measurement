@@ -5,10 +5,9 @@ security:
             ROLE_ADMIN: [ROLE_USER]
 
     encoders:
-        Symfony\Component\Security\Core\User\User:
-            algorithm: bcrypt
-        AppBundle\Entity\User:
-            algorithm: bcrypt
+        AppBundle\Entity\User: bcrypt
+        Symfony\Component\Security\Core\User\User: bcrypt
+
     # https://symfony.com/doc/current/security.html#b-configuring-how-users-are-loaded
     providers:
         chain_provider:
@@ -54,3 +53,4 @@ security:
             - { path: ^/registration-form-submission$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/(login|register)$, roles: IS_AUTHENTICATED_ANONYMOUSLY }
             - { path: ^/, roles: ROLE_USER }
+            - { path: ^/pristroje/pridat, roles: ROLE_ADMIN }

@@ -14,6 +14,7 @@ class SecurityController extends Controller
      */
     public function loginAction(Request $request, AuthenticationUtils $authUtils)
     {
+
         if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY'))
             return $this->redirectToRoute('device_list');
         // get the login error if there is one
@@ -28,8 +29,7 @@ class SecurityController extends Controller
         $lastUsername = $authUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', [
-            'last_username' => $lastUsername,
-            'error'=> $error
+            'last_username' => $lastUsername
         ]);
 
     }
