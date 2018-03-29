@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" href="{{ asset('favicon.png') }}">
     <title>{% block title %}{% endblock %}</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css">
@@ -41,6 +41,9 @@
                     </li>
                 {% endif %}
             </ul>
+            <span class="navbar-text ml-auto">
+                <span id="time"></span>&nbsp;&nbsp;&nbsp;<span id="date"></span>
+            </span>
             {% if app.user %}
                 <span class="navbar-text ml-auto">
                     Přihlášený jako: <b>{{ app.user.username }}</b>
@@ -82,12 +85,19 @@
 
 <footer class="footer">
     <div class="text-center">
-        © 2018 Copyright:
-        <a href="#"> Jakub Červený</a>
+        © 2018 Copyright:<a href="#"> Jakub Červený</a>
     </div>
 </footer>
 
 {% block javascripts %}{% endblock %}
+<script>
+    window.setInterval(ut, 1000);
 
+    function ut() {
+        var d = new Date();
+        document.getElementById("time").innerHTML = d.toLocaleTimeString();
+        document.getElementById("date").innerHTML = d.toLocaleDateString();
+    }
+</script>
 </body>
 </html>
