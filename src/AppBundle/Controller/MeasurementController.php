@@ -86,9 +86,13 @@ class MeasurementController extends Controller
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
 
-        $Pristroj = $this->getDoctrine()
-            ->getRepository('AppBundle:Pristroj')
-            ->find($id);
+        $Pristroj = $this->getDoctrine()->getRepository('AppBundle:Pristroj')->find($id);
+
+        if (!$Pristroj) {
+            $this->addFlash('warning','Přístroj s ID '.$id.' nenalezen.');
+
+            return $this->redirectToRoute('device_list');
+        }
 
         $Pristroj->setNazev($Pristroj->getNazev());
         $Pristroj->setKategorie($Pristroj->getKategorie());
@@ -126,10 +130,7 @@ class MeasurementController extends Controller
 
             $em->flush();
 
-            $this->addFlash(
-                'primary',
-                'Přístroj upraven'
-            );
+            $this->addFlash('primary','Přístroj upraven');
 
             return $this->redirectToRoute('device_list');
         }
@@ -150,6 +151,12 @@ class MeasurementController extends Controller
             ->getRepository('AppBundle:Pristroj')
             ->find($id);
 
+        if (!$Pristroj) {
+            $this->addFlash('warning','Přístroj s ID '.$id.' nenalezen.');
+
+            return $this->redirectToRoute('device_list');
+        }
+
         return $this->render('measurement/details.html.twig', [
             'Pristroj' => $Pristroj
         ]);
@@ -166,6 +173,12 @@ class MeasurementController extends Controller
 
         $em = $this->getDoctrine()->getManager();
         $Pristroj = $em->getRepository('AppBundle:Pristroj')->find($id);
+
+        if (!$Pristroj) {
+            $this->addFlash('warning','Přístroj s ID '.$id.' nenalezen.');
+
+            return $this->redirectToRoute('device_list');
+        }
 
         $em->remove($Pristroj);
         $em->flush();
