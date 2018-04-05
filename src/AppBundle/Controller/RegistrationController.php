@@ -18,6 +18,8 @@ class RegistrationController extends Controller
      */
     public function registerAction(Request $request, UserPasswordEncoderInterface $passwordEncoder)
     {
+        if ($this->get('security.authorization_checker')->isGranted('IS_AUTHENTICATED_FULLY'))
+            return $this->redirectToRoute('device_list');
         // 1) build the form
         $user = new User();
         $form = $this->createForm(UserType::class, $user);

@@ -18,7 +18,7 @@
             <tr>
                 <th scope="row">{{ pristroj.id }}</th>
                 <td>{{ pristroj.nazev }}</td>
-                <td>{{ pristroj.kategorie }}</td>
+                <td>{{ pristroj.category }}</td>
                 <td>
                     <a href="/pristroje/detaily/{{ pristroj.id }}" class="btn btn-success">Zobrazit</a>
                     {% if is_granted('ROLE_ADMIN') %}

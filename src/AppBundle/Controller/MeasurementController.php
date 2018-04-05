@@ -3,28 +3,69 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Pristroj;
+use AppBundle\Entity\Category;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 
 class MeasurementController extends Controller
 {
     /**
      * @Route("/", name="device_list")
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listAction(){
-        $pristroje = $this->getDoctrine()
-            ->getRepository('AppBundle:Pristroj')
+
+        $pristroje = $this->getDoctrine()->getRepository(Pristroj::class)
             ->findAll();
 
         return $this->render('measurement/index.html.twig', [
             'pristroje' => $pristroje
         ]);
+
     }
 
+    /**
+     * @Route("/category_add", name="category_add")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function createCategoryAction(Request $request){
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
+
+        $Category = new Category;
+
+        $form = $this->createFormBuilder($Category)
+            ->add('name', TextType::class, ['label' => 'Název kategorie', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('save', SubmitType::class, ['label' => 'Přidat kategorii', 'attr' => ['class' => 'btn btn-primary', 'style' => 'margin-bottom:15px']])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $name = $form['name']->getData();
+
+            $Category->setName($name);
+
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($Category);
+            $em->flush();
+
+            $this->addFlash('success','Kategorie přidána s id: ' .$Category->getId());
+
+            return $this->redirectToRoute('device_list');
+        }
+
+        return $this->render('measurement/create_category.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
     /**
      * @Route("/pristroje/pridat", name="device_add")
      * @param Request $request
@@ -38,7 +79,7 @@ class MeasurementController extends Controller
 
         $form = $this->createFormBuilder($Pristroj)
             ->add('Nazev', TextType::class, ['label' => 'Název', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
-            ->add('Kategorie', ChoiceType::class, ['label' => 'Kategorie', 'choices' => ['Voltmetr' => 'Voltmetr', 'Ampermetr' => 'Ampermetr', 'Wattmetr' => 'Wattmetr', 'Osciloskop' => 'Osciloskop', 'Jiné' => 'Jiné'], 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('Category', EntityType::class, ['label' => 'Kategorie', 'class' => 'AppBundle:Category', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('CisloUlozeni', TextType::class, ['label' => 'Číslo uložení', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('PridanoUzivatelem', TextType::class, ['label' => 'Přidáno uživatelem', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('save', SubmitType::class, ['label' => 'Přidat přístroj', 'attr' => ['class' => 'btn btn-primary', 'style' => 'margin-bottom:15px']])
@@ -49,24 +90,25 @@ class MeasurementController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             // Get Data
             $name = $form['Nazev']->getData();
-            $category = $form['Kategorie']->getData();
+            $Category = $form['Category']->getData();
             $number = $form['CisloUlozeni']->getData();
             $user = $form['PridanoUzivatelem']->getData();
 
             $now = new\DateTime('now');
 
             $Pristroj->setNazev($name);
-            $Pristroj->setKategorie($category);
+            $Pristroj->setCategory($Category);
             $Pristroj->setCisloUlozeni($number);
             $Pristroj->setDatumPridani($now);
             $Pristroj->setPridanoUzivatelem($user);
 
             $em = $this->getDoctrine()->getManager();
 
+            $em->persist($Category);
             $em->persist($Pristroj);
             $em->flush();
 
-            $this->addFlash('success','Přístroj přidán');
+            $this->addFlash('success','Přístroj přidán s id: '.$Pristroj->getId() .' a kategorií s id: '.$Category->getId());
 
             return $this->redirectToRoute('device_list');
         }
@@ -86,7 +128,7 @@ class MeasurementController extends Controller
 
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
 
-        $Pristroj = $this->getDoctrine()->getRepository('AppBundle:Pristroj')->find($id);
+        $Pristroj = $this->getDoctrine()->getRepository(Pristroj::class)->find($id);
 
         if (!$Pristroj) {
             $this->addFlash('warning','Přístroj s ID '.$id.' nenalezen.');
@@ -95,15 +137,13 @@ class MeasurementController extends Controller
         }
 
         $Pristroj->setNazev($Pristroj->getNazev());
-        $Pristroj->setKategorie($Pristroj->getKategorie());
+        $Pristroj->setCategory($Pristroj->getCategory());
         $Pristroj->setCisloUlozeni($Pristroj->getCisloUlozeni());
-        $Pristroj->setDatumPridani($Pristroj->getDatumPridani());
         $Pristroj->setPridanoUzivatelem($Pristroj->getPridanoUzivatelem());
 
         $form = $this->createFormBuilder($Pristroj)
             ->add('Nazev', TextType::class, ['label' => 'Název', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
-            ->add('Kategorie', ChoiceType::class, ['label' => 'Kategorie', 'choices' => ['Voltmetr' => 'Voltmetr', 'Ampermetr' => 'Ampermetr', 'Wattmetr' => 'Wattmetr', 'Osciloskop' => 'Osciloskop', 'Jiné' => 'Jiné'], 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
-            ->add('CisloUlozeni', TextType::class, ['label' => 'Číslo uložení', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('Category', EntityType::class, ['label' => 'Kategorie', 'class' => 'AppBundle:Category', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])            ->add('CisloUlozeni', TextType::class, ['label' => 'Číslo uložení', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('PridanoUzivatelem', TextType::class, ['label' => 'Přidáno uživatelem', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('save', SubmitType::class, ['label' => 'Upravit přístroj', 'attr' => ['class' => 'btn btn-primary', 'style' => 'margin-bottom:15px']])
             ->getForm();
@@ -113,7 +153,7 @@ class MeasurementController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             // Get Data
             $name = $form['Nazev']->getData();
-            $category = $form['Kategorie']->getData();
+            $Category = $form['Category']->getData();
             $number = $form['CisloUlozeni']->getData();
             $user = $form['PridanoUzivatelem']->getData();
 
@@ -123,14 +163,14 @@ class MeasurementController extends Controller
             $Pristroj = $em->getRepository('AppBundle:Pristroj')->find($id);
 
             $Pristroj->setNazev($name);
-            $Pristroj->setKategorie($category);
+            $Pristroj->setCategory($Category);
             $Pristroj->setCisloUlozeni($number);
             $Pristroj->setDatumPridani($now);
             $Pristroj->setPridanoUzivatelem($user);
 
             $em->flush();
 
-            $this->addFlash('primary','Přístroj upraven');
+            $this->addFlash('primary','Přístroj upraven s id: '.$Pristroj->getId() .' a kategorií s id: '.$Category->getId());
 
             return $this->redirectToRoute('device_list');
         }
@@ -148,7 +188,7 @@ class MeasurementController extends Controller
      */
     public function detailsAction($id){
         $Pristroj = $this->getDoctrine()
-            ->getRepository('AppBundle:Pristroj')
+            ->getRepository(Pristroj::class)
             ->find($id);
 
         if (!$Pristroj) {
@@ -158,7 +198,7 @@ class MeasurementController extends Controller
         }
 
         return $this->render('measurement/details.html.twig', [
-            'Pristroj' => $Pristroj
+            'Pristroj' => $Pristroj,
         ]);
     }
 
@@ -172,7 +212,7 @@ class MeasurementController extends Controller
         $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
 
         $em = $this->getDoctrine()->getManager();
-        $Pristroj = $em->getRepository('AppBundle:Pristroj')->find($id);
+        $Pristroj = $em->getRepository(Pristroj::class)->find($id);
 
         if (!$Pristroj) {
             $this->addFlash('warning','Přístroj s ID '.$id.' nenalezen.');
@@ -185,7 +225,7 @@ class MeasurementController extends Controller
 
         $this->addFlash(
             'danger',
-            'Přístroj odstraněn'
+            'Přístroj s ID '.$id.' odstraněn'
         );
 
         return $this->redirectToRoute('device_list');
