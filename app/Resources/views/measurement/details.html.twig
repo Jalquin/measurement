@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Detaily přístroje {{ Pristroj.Nazev }}{% endblock %}
+{% block title %}Detaily přístroje {{ Device.Nazev }}{% endblock %}
 
 
 {% block body %}
     <a class="btn btn-secondary" href="{{ path('device_list') }}">Zpět na seznam</a>
     <hr>
-    <h2 class="page-header">{{ Pristroj.Nazev }}</h2>
+    <h2 class="page-header">{{ device.name }}</h2>
     <ul class="list-group">
-        <li class="list-group-item">Kategorie: {{ Pristroj.category}}</li>
-        <li class="list-group-item">Číslo uložení: {{ Pristroj.CisloUlozeni }}</li>
-        <li class="list-group-item">Datum přidání: {{ Pristroj.DatumPridani|date('F j, Y, g:i a') }}</li>
-        <li class="list-group-item">Přidáno uživatelem: {{ Pristroj.PridanoUzivatelem }}</li>
+        <li class="list-group-item">Kategorie: {{ device.category }}</li>
+        <li class="list-group-item">Číslo uložení: {{ device.number }}</li>
+        <li class="list-group-item">Datum přidání: {{ device.date|date('F j, Y, g:i a') }}</li>
+        <li class="list-group-item">Přidáno uživatelem: {{ device.addedBy }}</li>
     </ul>
 {% endblock %}

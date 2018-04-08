@@ -14,16 +14,16 @@
         </tr>
         </thead>
         <tbody>
-        {% for pristroj in pristroje %}
+        {% for device in devices %}
             <tr>
-                <th scope="row">{{ pristroj.id }}</th>
-                <td>{{ pristroj.nazev }}</td>
-                <td>{{ pristroj.category }}</td>
+                <th scope="row">{{ device.id }}</th>
+                <td>{{ device.name }}</td>
+                <td>{{ device.category }}</td>
                 <td>
-                    <a href="/pristroje/detaily/{{ pristroj.id }}" class="btn btn-success">Zobrazit</a>
+                    <a href="/pristroje/detaily/{{ device.id }}" class="btn btn-success">Zobrazit</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                    <a href="/pristroje/upravit/{{ pristroj.id }}" class="btn btn-primary">Upravit</a>
-                    <a href="/pristroje/odstranit/{{ pristroj.id }}" class="btn btn-danger">Odstranit</a>
+                    <a href="/pristroje/upravit/{{ device.id }}" class="btn btn-primary">Upravit</a>
+                    <a href="/pristroje/odstranit/{{ device.id }}" class="btn btn-danger">Odstranit</a>
                     {% endif %}
 
                 </td>

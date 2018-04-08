@@ -30,13 +30,13 @@ class Category
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Pristroj", mappedBy="category")
+     * @ORM\OneToMany(targetEntity="Device", mappedBy="category")
      */
-    private $pristroje;
+    private $device;
 
     public function __construct()
     {
-        $this->pristroje = new ArrayCollection();
+        $this->device = new ArrayCollection();
     }
 
 
@@ -76,6 +76,6 @@ class Category
 
     public function __toString()
     {
-        return (string) $this->getId();
+        return (string)$this->getId();
     }
 }
