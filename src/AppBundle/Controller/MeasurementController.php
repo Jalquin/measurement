@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Entity\Device;
 use AppBundle\Entity\Category;
+use AppBundle\Entity\Location;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +19,6 @@ class MeasurementController extends Controller
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function listAction(){
-
         $devices = $this->getDoctrine()->getRepository(Device::class)
             ->findAll();
 
@@ -56,7 +56,48 @@ class MeasurementController extends Controller
             $em->persist($Category);
             $em->flush();
 
-            $this->addFlash('success','Kategorie přidána s id: ' .$Category->getId());
+            $this->addFlash('success','Kategorie přidána s id: ' .$Category->getId(). ' a jménem: ' . $Category->getName());
+
+            return $this->redirectToRoute('device_list');
+        }
+
+        return $this->render('measurement/create_category.html.twig', [
+            'form' => $form->createView()
+        ]);
+    }
+    /**
+     * @Route("/location_add", name="location_add")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    public function createLocationAction(Request $request){
+
+        $this->denyAccessUnlessGranted('ROLE_ADMIN', null);
+
+        $location = new Location();
+
+        $form = $this->createFormBuilder($location)
+            ->add('name', TextType::class, ['label' => 'Název umístění', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('shortcut', TextType::class, ['label' => 'Zkratka', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('save', SubmitType::class, ['label' => 'Přidat umístění', 'attr' => ['class' => 'btn btn-primary', 'style' => 'margin-bottom:15px']])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+
+            $name = $form['name']->getData();
+            $shortcut = $form['shortcut']->getData();
+
+            $location->setName($name);
+            $location->setShortcut($shortcut);
+
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($location);
+            $em->flush();
+
+            $this->addFlash('success','Kategorie přidána s id: ' .$location->getId(). ' a jménem: ' . $location->getName());
 
             return $this->redirectToRoute('device_list');
         }
@@ -79,8 +120,8 @@ class MeasurementController extends Controller
         $form = $this->createFormBuilder($device)
             ->add('name', TextType::class, ['label' => 'Název', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('category', EntityType::class, ['label' => 'Kategorie', 'class' => 'AppBundle:Category', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('location', EntityType::class, ['label' => 'Umístění', 'class' => 'AppBundle:Location', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('number', TextType::class, ['label' => 'Číslo uložení', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
-            ->add('addedBy', TextType::class, ['label' => 'Přidáno uživatelem', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('save', SubmitType::class, ['label' => 'Přidat přístroj', 'attr' => ['class' => 'btn btn-primary', 'style' => 'margin-bottom:15px']])
             ->getForm();
 
@@ -91,12 +132,15 @@ class MeasurementController extends Controller
             $name = $form['name']->getData();
             $category = $form['category']->getData();
             $number = $form['number']->getData();
-            $user = $form['addedBy']->getData();
+            $location = $form['location']->getData();
+
+            $user = $this->get('security.token_storage')->getToken()->getUser();
 
             $now = new\DateTime('now');
 
             $device->setName($name);
             $device->setCategory($category);
+            $device->setLocation($location);
             $device->setnumber($number);
             $device->setDate($now);
             $device->setaddedBy($user);
@@ -104,10 +148,11 @@ class MeasurementController extends Controller
             $em = $this->getDoctrine()->getManager();
 
             $em->persist($category);
+            $em->persist($location);
             $em->persist($device);
             $em->flush();
 
-            $this->addFlash('success','Přístroj přidán s id: '.$device->getId() .' a kategorií s id: '.$category->getId());
+            $this->addFlash('success','Přístroj přidán s id: '.$device->getId() .' a kategorií s id: '.$category->getId() . '. Název: ' . $device->getName() . ', Kategorie: '.$category->getName() );
 
             return $this->redirectToRoute('device_list');
         }
@@ -137,12 +182,15 @@ class MeasurementController extends Controller
 
         $device->setName($device->getName());
         $device->setCategory($device->getCategory());
+        $device->setLocation($device->getLocation());
         $device->setNumber($device->getNumber());
         $device->setAddedBy($device->getAddedBy());
 
         $form = $this->createFormBuilder($device)
             ->add('name', TextType::class, ['label' => 'Název', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
-            ->add('Category', EntityType::class, ['label' => 'Kategorie', 'class' => 'AppBundle:Category', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])            ->add('number', TextType::class, ['label' => 'Číslo uložení', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('category', EntityType::class, ['label' => 'Kategorie', 'class' => 'AppBundle:Category', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('location', EntityType::class, ['label' => 'Umístění', 'class' => 'AppBundle:Location', 'choice_label' => 'name', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
+            ->add('number', TextType::class, ['label' => 'Číslo uložení', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('addedBy', TextType::class, ['label' => 'Přidáno uživatelem', 'attr' => ['class' => 'form-control', 'style' => 'margin-bottom:15px']])
             ->add('save', SubmitType::class, ['label' => 'Upravit přístroj', 'attr' => ['class' => 'btn btn-primary', 'style' => 'margin-bottom:15px']])
             ->getForm();
@@ -152,7 +200,8 @@ class MeasurementController extends Controller
         if($form->isSubmitted() && $form->isValid()){
             // Get Data
             $name = $form['name']->getData();
-            $category = $form['Category']->getData();
+            $location = $form['location']->getData();
+            $category = $form['category']->getData();
             $number = $form['number']->getData();
             $user = $form['addedBy']->getData();
 
@@ -163,13 +212,14 @@ class MeasurementController extends Controller
 
             $device->setName($name);
             $device->setCategory($category);
+            $device->setLocation($location);
             $device->setNumber($number);
             $device->setDate($now);
             $device->setAddedBy($user);
 
             $em->flush();
 
-            $this->addFlash('primary','Přístroj upraven s id: '.$device->getId() .' a kategorií s id: '.$category->getId());
+            $this->addFlash('primary','Přístroj upraven s id: '.$device->getId() .' a kategorií s id: '.$category->getId() . '. Název: ' . $device->getName() . ', Kategorie: '.$category->getName() );
 
             return $this->redirectToRoute('device_list');
         }

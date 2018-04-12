@@ -1,29 +1,32 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Seznam přístrojů{% endblock %}
+{% block title %}Seznam uživatelů{% endblock %}
 
 {% block body %}
-    <h2 class="page-header">Seznam Přístrojů</h2>
+    <h2 class="page-header">Seznam Uživatelů</h2>
+    <hr>
+    <a class="btn btn-secondary" href="{{ path('user_add') }}">Přidat uživatele</a>
+    <hr>
     <table id="table" class="table table-striped">
         <thead>
         <tr>
-            <th>Číslo uložení</th>
-            <th>Název</th>
-            <th>Kategorie</th>
+            <th>#</th>
+            <th>Username</th>
+            <th>Email</th>
             <th>Akce</th>
         </tr>
         </thead>
         <tbody>
-        {% for device in devices %}
+        {% for user in users %}
             <tr>
-                <th scope="row">{{ device.location.shortcut }}/{{ device.number }}</th>
-                <td>{{ device.name }}</td>
-                <td>{{ device.category.name }}</td>
+                <th scope="row">{{ user.id }}</th>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
                 <td>
-                    <a href="/pristroje/detaily/{{ device.id }}" class="btn btn-success">Zobrazit</a>
+                    <a href="/users/detaily/{{ user.id }}" class="btn btn-success">Zobrazit</a>
                     {% if is_granted('ROLE_ADMIN') %}
-                    <a href="/pristroje/upravit/{{ device.id }}" class="btn btn-primary">Upravit</a>
-                    <a href="/pristroje/odstranit/{{ device.id }}" class="btn btn-danger">Odstranit</a>
+                        <a href="/users/upravit/{{ user.id }}" class="btn btn-primary">Upravit</a>
+                        <a href="/users/odstranit/{{ user.id }}" class="btn btn-danger">Odstranit</a>
                     {% endif %}
 
                 </td>

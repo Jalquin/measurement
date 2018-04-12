@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Detaily uživatele {{ user.username }}{% endblock %}
+
+
+{% block body %}
+    <a class="btn btn-secondary" href="{{ path('user_list') }}">Zpět na seznam</a>
+    <hr>
+    <h2 class="page-header">{{ user.username }}</h2>
+    <ul class="list-group">
+        <li class="list-group-item">E-mail: {{ user.email }}</li>
+        <li class="list-group-item">Heslo: {{ user.password }}</li>
+    </ul>
+{% endblock %}

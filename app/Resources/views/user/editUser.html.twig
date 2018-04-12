@@ -1,0 +1,15 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Upravit uživatele {{ user.username }}{% endblock %}
+
+{% block body %}
+    <h2 class="page-header">Upravit uživatele {{ user.username }}</h2>
+    <hr>
+    {{ form_start(form) }}
+    {{ form_row(form.username) }}
+    {{ form_row(form.email) }}
+    {{ form_row(form.plainPassword.first) }}
+    {{ form_row(form.plainPassword.second) }}
+    <button class="btn btn-primary" type="submit">Upravit</button>
+    {{ form_end(form) }}
+{% endblock %}

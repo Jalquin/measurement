@@ -2,18 +2,18 @@
 
 namespace AppBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
- * Category
+ * Location
  *
- * @UniqueEntity(fields="name", message="Tato kategorie je již vytvořena.")
+ * @UniqueEntity(fields="shortcut", message="Tato místnost je již zaznamenána")
  *
- * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\LocationRepository")
  */
-class Category
+class Location
 {
     /**
      * @var int
@@ -27,12 +27,20 @@ class Category
     /**
      * @var string
      *
-     * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @ORM\Column(name="name", type="string", length=255 )
      */
     private $name;
 
     /**
-     * @ORM\OneToMany(targetEntity="Device", mappedBy="category")
+     * @var string
+     *
+     * @ORM\Column(name="shortcut", type="string", length=3, unique=true)
+     */
+    private $shortcut;
+
+
+    /**
+     * @ORM\OneToMany(targetEntity="Device", mappedBy="location")
      */
     private $device;
 
@@ -40,7 +48,6 @@ class Category
     {
         $this->device = new ArrayCollection();
     }
-
 
     /**
      * Get id
@@ -57,7 +64,7 @@ class Category
      *
      * @param string $name
      *
-     * @return Category
+     * @return Location
      */
     public function setName($name)
     {
@@ -77,11 +84,34 @@ class Category
     }
 
     /**
+     * Set shortcut
+     *
+     * @param string $shortcut
+     *
+     * @return Location
+     */
+    public function setShortcut($shortcut)
+    {
+        $this->shortcut = $shortcut;
+
+        return $this;
+    }
+
+    /**
+     * Get shortcut
+     *
+     * @return string
+     */
+    public function getShortcut()
+    {
+        return $this->shortcut;
+    }
+    /**
      * Add device
      *
      * @param \AppBundle\Entity\Device $device
      *
-     * @return Category
+     * @return Location
      */
     public function addDevice(\AppBundle\Entity\Device $device)
     {
@@ -110,3 +140,4 @@ class Category
         return $this->device;
     }
 }
+

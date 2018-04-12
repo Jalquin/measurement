@@ -3,9 +3,12 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Device
+ *
+ * @UniqueEntity(fields="number", message="Číslo uložní je již obsazeno!")
  *
  * @ORM\Entity(repositoryClass="AppBundle\Repository\DeviceRepository")
  */
@@ -28,15 +31,22 @@ class Device
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Category", inversedBy="Devices")
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="device")
      * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
      */
     private $category;
 
     /**
-     * @var string
+     * @ORM\ManyToOne(targetEntity="Location", inversedBy="device")
+     * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
+     */
+    private $location;
+
+
+    /**
+     * @var int
      *
-     * @ORM\Column(name="number", type="string", length=255, unique=true)
+     * @ORM\Column(name="number", type="integer", length=3, unique=true)
      */
     private $number;
 
@@ -161,7 +171,29 @@ class Device
         return $this->addedBy;
     }
 
+    /**
+     * Set location
+     *
+     * @param \AppBundle\Entity\Location $location
+     *
+     * @return device
+     */
+    public function setLocation(\AppBundle\Entity\Location $location = null)
+    {
+        $this->location = $location;
 
+        return $this;
+    }
+
+    /**
+     * Get location
+     *
+     * @return \AppBundle\Entity\Location
+     */
+    public function getLocation()
+    {
+        return $this->location;
+    }
 
     /**
      * Set category
@@ -185,10 +217,5 @@ class Device
     public function getCategory()
     {
         return $this->category;
-    }
-
-    public function __toString()
-    {
-        return (string) $this->getCategory();
     }
 }

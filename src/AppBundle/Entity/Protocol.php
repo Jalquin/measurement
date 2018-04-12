@@ -7,7 +7,6 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * Protocol
  *
- * @ORM\Table(name="protocol")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProtocolRepository")
  */
 class Protocol
